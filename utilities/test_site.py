@@ -4,7 +4,7 @@ import requests
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
-    url = 'https://www.microcenter.com/product/628318/asus-geforce-rtx-3080-tuf-gaming-overclocked-triple-fan-10gb-gddr6x-pcie-40-graphics-card'
+    url = 'https://www.microcenter.com/product/602019/msi-geforce-rtx-2060-gaming-z-dual-fan-6gb-gddr6-pcie-30-graphics-card'
     button_text = 'value="Locate In Store"'
     verbose = True
 
@@ -22,4 +22,5 @@ if __name__ == '__main__':
 
     print("HTTP status code " + str(status_code))
     print("Substring position " + str(soldout_pos))
+    print(r.text)
 

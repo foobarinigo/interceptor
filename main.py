@@ -29,6 +29,7 @@ def is_instock(card):
             print("Substring position " + str(soldout_pos))
 
         if( soldout_pos < 0 ):
+
             return True
 
     else:
@@ -38,16 +39,17 @@ def is_instock(card):
 
 def loop_and_tweet(card_list):
     # Check if an item is in stock, and if so, tweet about it
-    debug_message = "DEBUG_MESSAGE( " + str(datetime.now()) + " ):"
     now = str(datetime.now())
+    debug_message = "DEBUG_MESSAGE( " + now + " ):"
 
     for card in card_list:
         message = card['id'] + " in stock at " + card['vendor'] + \
                   " " + now + " " + card['url']
-        instock = is_instock(card)
 
+        instock = is_instock(card)
         if( instock ):
             api.update_status(message)
+            log.write(message)
 
         debug_message = debug_message + "\n" + message
 
@@ -55,19 +57,26 @@ def loop_and_tweet(card_list):
         print("\n" + debug_message)
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    # Showtime
+    ### verbose: output helpful messages to the console and the log file
+    ### repeat: run on a 60 second timer
+    ### repeat_time: time to wait between calls
+    ### cards: list of websites, cards we're looking for
+    ### log: logfile for when we find stuff (record of twitter failing too...)
 
     verbose = True
-    repeat = False
-    cards = load_cards('./cards_test.json')
+    repeat = True
+    repeat_time = 60
+    cards = load_cards('./cards.json')
+    log = open('./instock_record.txt', 'a')
 
     # Request init: mock a chrome browser
     user_agent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36'
     headers = {'User-Agent': user_agent} # ,"cache-control":"max-age=0"}
 
     # Auth with twitter
-    # TODO: How long does session stay authenticated?
+    # TODO: How long does session stay authenticated? Apparently up to ~24 hr
     auth = tweepy.OAuthHandler(secrets.consumer_key, secrets.consumer_secret_key)
     auth.set_access_token(secrets.access_token, secrets.access_token_secret)
     api = tweepy.API(auth)
@@ -78,7 +87,8 @@ if __name__ == '__main__':
         loop_and_tweet(cards)
 
         if (repeat):
-            time.sleep(60)
+            time.sleep(repeat_time)
         else:
             break
 
+    log.close()

@@ -4,7 +4,7 @@ import requests
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
-    url = 'https://www.microcenter.com/product/602019/msi-geforce-rtx-2060-gaming-z-dual-fan-6gb-gddr6-pcie-30-graphics-card'
+    url = 'https://www.badurl.com/product/602019/msi-geforce-rtx-2060-gaming-z-dual-fan-6gb-gddr6-pcie-30-graphics-card'
     button_text = 'value="Locate In Store"'
     verbose = True
 
@@ -16,11 +16,15 @@ if __name__ == '__main__':
     # if the string isn't found and page didn't error, notify as "in stock"
     # This will fail if (looking at you Best Buy) a vendor changes to "Coming Soon" or some such
     # which is rare
-    r = requests.get(url, headers=headers)
-    status_code = r.status_code
-    soldout_pos = r.text.find(button_text)
-
-    print("HTTP status code " + str(status_code))
-    print("Substring position " + str(soldout_pos))
-    print(r.text)
+    try:
+        r = requests.get(url, headers=headers, timeout = 2)
+    except requests.exceptions.RequestException as e:
+        print("Exception " + str(e))
+        pass
+    else:
+        status_code = r.status_code
+        soldout_pos = r.text.find(button_text)
+        print("HTTP status code " + str(status_code))
+        print("Substring position " + str(soldout_pos))
+        print(r.text)
 

@@ -18,9 +18,16 @@ def is_instock(card):
     # if the string isn't found and page didn't error, notify as "in stock"
     # This will fail if (looking at you Best Buy) a vendor changes to "Coming Soon" or some such
     # which is rare
-    r = requests.get(card['url'], headers=headers)
-    status_code = r.status_code
-    soldout_pos = r.text.find(card['button'])
+
+    status_code = 321
+    try:
+        r = requests.get(card['url'], headers=headers, timeout = 5)
+    except requests.exceptions.RequestException as e:
+        print("Exception " + str(e))
+        pass
+    else:
+        status_code = r.status_code
+        soldout_pos = r.text.find(card['button'])
 
     if( status_code < 300 ):
         if( verbose ):
